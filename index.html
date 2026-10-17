@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orbi</title>
+<meta name="description" content="Orbi. Orbit the people you care about and share what is happening.">
+<meta name="theme-color" content="#0356c5">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAASFBMVEX////4+fuywNNaeKEUWLUCU78CULkCTrMNQ4wCSqsCRZ4CPo8COIEJMWgCM3UCLmkDKFwCIk4CGz8CFzQCEisCDyICChYCBg567bmAAAAA8ElEQVR42oWRSXbEIAwFBSJpYpo2whnuf9NoAE+9UC3Mt1TmyQAfDuAKnw7wcIAvh5uQYkw3YbkQAeK1cggpHYLmIRRlKRgCliJCsbxYZwjSCoAFQR9BtJvALammpNuwNoWnkZ+yr2VNeTSmIE5+Tyy8FETMrxOZC5ZMkAECHn0MMoYJq8C/wIOvVV94Ge+CCbbDumM7mNAUmaGdkBkswVGs9T2xQEprJH9PjeNIzTpDINKTJKqVSE9y1ndB78I+1rvYhT7gKvYutykZcNZ3odfap2B5CNuJvonAy4mLsG0UI10r8O0APw6+8OvgC38O/9tQMUKkzOUrAAAAAElFTkSuQmCC">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Orbi">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="splash" class="gx" role="img" aria-label="Orbi">
+  <div class="lockup"><span class="ring"></span><span class="word"></span></div>
+  <div id="splash-err" class="errbox" hidden>
+    <p id="splash-err-text"></p>
+    <button class="abtn primary" id="splash-retry" style="width:auto;padding:0 28px">Try again</button>
+  </div>
+</div>
+
+<main id="auth" class="gx" hidden>
+  <div class="auth-inner">
+    <div class="lockup" aria-label="Orbi"><span class="ring"></span><span class="word"></span></div>
+    <div class="auth-head"><h1 id="auth-title"></h1><p id="auth-sub"></p></div>
+    <div class="seg-auth" role="tablist" aria-label="Account">
+      <button id="tab-signup" role="tab" data-mode="signup">Sign up</button>
+      <button id="tab-login" role="tab" data-mode="login">Log in</button>
+    </div>
+    <div id="auth-panel" class="stack"></div>
+    <p class="legal">By continuing you agree to the Orbi terms and privacy policy.</p>
+  </div>
+</main>
+
+<div id="app" hidden>
+  <header class="topbar gx" id="topbar"></header>
+  <div class="content" id="content">
+    <section id="v-home" data-view="home">
+      <div class="tabs2" role="tablist" aria-label="Feed">
+        <button role="tab" data-feed="foryou" id="ft-foryou">For you</button>
+        <button role="tab" data-feed="orbiting" id="ft-orbiting">Orbiting</button>
+      </div>
+      <div class="composer gx">
+        <div id="composer-av"></div>
+        <div class="cbody">
+          <div class="replychip" id="reply-chip" hidden></div>
+          <label class="sr" for="composer-text">Write an orb</label>
+          <textarea id="composer-text" class="in" placeholder="What's happening in your orbit?" rows="2"></textarea>
+          <div class="crow"><span class="count" id="composer-count">0/280</span><button class="btn fill" id="composer-post" disabled>Orb</button></div>
+        </div>
+      </div>
+      <div id="feed"></div>
+    </section>
+
+    <section id="v-explore" data-view="explore" hidden>
+      <div class="pad gx">
+        <div class="search">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+          <label class="sr" for="search-in">Search Orbi</label>
+          <input id="search-in" class="in" type="search" placeholder="Search orbs and people" autocomplete="off">
+        </div>
+        <div id="explore-body"></div>
+      </div>
+    </section>
+
+    <section id="v-alerts" data-view="alerts" hidden>
+      <div class="pad gx"><h2 class="ttl">Alerts</h2></div>
+      <div id="alerts-list"></div>
+    </section>
+
+    <section id="v-profile" data-view="profile" hidden></section>
+    <section id="v-settings" data-view="settings" hidden></section>
+    <section id="v-security" data-view="security" hidden></section>
+  </div>
+  <nav class="tabbar" id="tabbar" aria-label="Main"></nav>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
