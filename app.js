@@ -53,7 +53,12 @@
     out: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
     device: '<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>',
     mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
-    install: '<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>'
+    install: '<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
+    chat: '<path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-7l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',
+    bookmark: '<path d="M6 3h12v18l-6-4-6 4z"/>',
+    star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+    people: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .6 3.5 2.2 3.5 5.2"/>',
+    list: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>'
   };
   var GOOGLE = '<svg viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>';
   var APPLE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>';
@@ -64,7 +69,8 @@
     following: {}, unread: 0, replyTo: null, posting: false,
     lists: { home: [], explore: [], profile: [] }, people: [], searchQ: "", searchToken: 0,
     homeLoading: false, editing: false, pwOpen: false, pwMsg: "", pwOk: false, recovery: false,
-    confirmDel: null, installEvt: null, counts: { orbiting: 0, orbiters: 0, orbs: 0 }
+    confirmDel: null, installEvt: null, counts: { orbiting: 0, orbiters: 0, orbs: 0 },
+    chatUnread: 0, chatThreads: [], thread: null, threadMsgs: [], pendingMsgs: [], threadSig: "", soonTitle: "", newPeople: []
   };
   var theme = "system";
 
@@ -116,6 +122,8 @@
     S.user = null; S.profile = null;
     document.body.classList.add("on-auth");
     $("#splash").hidden = true; $("#app").hidden = true; $("#auth").hidden = false;
+    $("#drawer").hidden = true; $("#compose").hidden = true; $("#fab").hidden = true;
+    S.thread = null; S.threadMsgs = []; S.pendingMsgs = []; S.chatThreads = []; S.chatUnread = 0;
     if (aview !== "confirm") { aview = "options"; }
     renderAuth();
   }
@@ -274,10 +282,22 @@
     S.following = {}; (r.data || []).forEach(function (x) { S.following[x.following_id] = true; });
   }
   async function loadUnread() {
-    var r = await sb.from("notifications").select("id", { count: "exact", head: true }).eq("read", false);
-    S.unread = r.count || 0; renderTabbar();
+    var res = await Promise.all([
+      sb.from("notifications").select("id", { count: "exact", head: true }).eq("read", false),
+      sb.from("messages").select("id", { count: "exact", head: true }).eq("recipient_id", S.user.id).is("read_at", null)
+    ]);
+    S.unread = res[0].count || 0; S.chatUnread = res[1].count || 0; renderTabbar();
   }
   setInterval(function () { if (S.user && !document.hidden) loadUnread(); }, 60000);
+  /* chat refresh: the open conversation or chat list checks for new messages every few seconds */
+  var tick = 0;
+  setInterval(function () {
+    if (!S.user || document.hidden) return;
+    tick++;
+    if (S.view === "thread") loadThread(true);
+    else if (S.view === "chat") loadChat(true);
+    if (tick % 4 === 0 && S.view !== "thread") loadUnread();
+  }, 4000);
   document.addEventListener("visibilitychange", function () { if (!document.hidden && S.user && S.view === "home") loadHome(true); });
 
   async function loadHome(quiet) {
@@ -291,25 +311,33 @@
   }
 
   /* ---------- navigation ---------- */
-  var TABS = [["home", "Home", I.home], ["explore", "Explore", I.search], ["alerts", "Alerts", I.bell], ["profile", "Profile", I.user]];
-  var TITLES = { settings: "Settings", security: "Security" };
-  function navKey(v) { return v === "settings" || v === "security" ? "profile" : v; }
+  var TABS = [["home", "Home", I.home], ["explore", "Explore", I.search], ["alerts", "Alerts", I.bell], ["chat", "Chat", I.chat], ["profile", "Profile", I.user]];
+  var TITLES = { settings: "Settings", security: "Security", newchat: "New message" };
+  function navKey(v) { return v === "settings" || v === "security" ? "profile" : v === "thread" || v === "newchat" ? "chat" : v; }
+  function topTitle(v) { return v === "thread" ? (S.thread ? S.thread.display_name : "Chat") : v === "soon" ? S.soonTitle : TITLES[v]; }
   function show(v) {
     S.view = v;
+    closeDrawer();
     $$("#content > section").forEach(function (s) { s.hidden = s.dataset.view !== v; });
+    $("#app").classList.toggle("in-thread", v === "thread");
+    $("#fab").hidden = v !== "home";
     renderTop(); renderTabbar();
     $("#content").scrollTop = 0;
     if (v === "home") { renderFeed(); loadHome(); }
     else if (v === "explore") loadExplore();
     else if (v === "alerts") loadAlerts();
+    else if (v === "chat") { renderChatList(); loadChat(); }
+    else if (v === "newchat") { $("#newchat-in").value = ""; loadNewChat(); }
+    else if (v === "soon") renderSoon();
     else if (v === "profile") loadProfile();
     else if (v === "settings") renderSettings();
     else if (v === "security") renderSecurity();
   }
   function renderTabbar() {
-    var cur = navKey(S.view), u = S.unread;
+    var cur = navKey(S.view);
     $("#tabbar").innerHTML = TABS.map(function (t) {
-      return '<button data-nav="' + t[0] + '"' + (cur === t[0] ? ' aria-current="page"' : "") + ">" + ic(t[2]) + "<span>" + t[1] + "</span>" + (t[0] === "alerts" && u ? '<span class="badge" aria-label="' + u + ' unread">' + (u > 99 ? "99+" : u) + "</span>" : "") + "</button>";
+      var n = t[0] === "alerts" ? S.unread : t[0] === "chat" ? S.chatUnread : 0;
+      return '<button data-nav="' + t[0] + '"' + (cur === t[0] ? ' aria-current="page"' : "") + ">" + ic(t[2]) + "<span>" + t[1] + "</span>" + (n ? '<span class="badge" aria-label="' + n + ' unread">' + (n > 99 ? "99+" : n) + "</span>" : "") + "</button>";
     }).join("");
   }
   function themeBtn() {
@@ -317,9 +345,9 @@
     return '<button class="iconbtn" data-act="theme" aria-label="Switch to ' + (dark ? "light" : "dark") + ' mode">' + ic(dark ? I.sun : I.moon) + "</button>";
   }
   function renderTop() {
-    var v = S.view, t = $("#topbar");
-    if (TITLES[v]) t.innerHTML = '<button class="iconbtn" data-act="back" aria-label="Back">' + ic(I.back) + '</button><div class="mid">' + TITLES[v] + "</div>" + themeBtn();
-    else t.innerHTML = '<button class="iconbtn" data-nav="profile" aria-label="Your profile">' + av(S.profile.display_name, 32) + '</button><button class="iconbtn" style="width:auto;margin:0 auto" data-act="top" aria-label="Orbi, back to top"><span class="ring" style="width:28px;color:var(--accent)"></span></button>' + themeBtn();
+    var v = S.view, t = $("#topbar"), title = topTitle(v);
+    if (title) t.innerHTML = '<button class="iconbtn" data-act="back" aria-label="Back">' + ic(I.back) + '</button><div class="mid">' + esc(title) + "</div>" + themeBtn();
+    else t.innerHTML = '<button class="iconbtn" data-act="menu" aria-label="Open menu">' + av(S.profile.display_name, 32) + '</button><button class="iconbtn" style="width:auto;margin:0 auto" data-act="top" aria-label="Orbi, back to top"><span class="ring" style="width:28px;color:var(--accent)"></span></button>' + themeBtn();
   }
   document.addEventListener("click", function (e) {
     var nav = e.target.closest("[data-nav]");
@@ -352,7 +380,7 @@
     if (S.homeLoading && !S.lists.home.length) { el.innerHTML = '<div class="loading">Loading orbs…</div>'; return; }
     el.innerHTML = S.feed === "orbiting"
       ? listPosts(S.lists.home, "Nothing here yet", "Orbit people in Explore and their orbs will show up here.")
-      : listPosts(S.lists.home, "No orbs yet", "Be the first. Write an orb above.");
+      : listPosts(S.lists.home, "No orbs yet", "Be the first. Tap Create to write an orb.");
   }
   function refreshLists() {
     if (S.view === "home") renderFeed();
@@ -375,10 +403,19 @@
     var r = await sb.from("orbs").insert({ author_id: S.user.id, body: t, reply_to: S.replyTo ? S.replyTo.id : null });
     S.posting = false;
     if (r.error) { updateComposer(); return toast(niceErr(r.error)); }
-    ta.value = ""; var wasReply = !!S.replyTo; S.replyTo = null; renderReplyChip(); updateComposer();
+    var wasReply = !!S.replyTo;
+    closeCompose(true);
     toast(wasReply ? "Reply sent." : "Your orb is live.");
-    if (S.feed === "orbiting") { /* own orbs are included in this tab */ }
     loadHome(true);
+    if (S.view === "profile") loadProfile(true);
+  }
+  function openCompose() {
+    $("#compose").hidden = false; updateComposer();
+    setTimeout(function () { $("#composer-text").focus(); }, 0);
+  }
+  function closeCompose(clear) {
+    $("#compose").hidden = true;
+    if (clear) { $("#composer-text").value = ""; S.replyTo = null; renderReplyChip(); updateComposer(); }
   }
   $("#composer-text").addEventListener("input", updateComposer);
   $("#composer-post").addEventListener("click", post);
@@ -509,6 +546,122 @@
     $("#composer-av").innerHTML = av(nm, 42); renderTop(); loadProfile(true); toast("Profile saved.");
   }
 
+  /* ---------- avatar menu (side drawer) ---------- */
+  var MENU = [["profile", "Profile", I.user], ["soon:Bookmarks", "Bookmarks", I.bookmark], ["soon:Premium", "Premium", I.star], ["soon:Communities", "Communities", I.people], ["soon:Lists", "Lists", I.list]];
+  function renderDrawer() {
+    var u = S.profile, c = S.counts;
+    $("#drawer-panel").innerHTML =
+      '<button class="dhead" data-act="drawergo" data-go="profile" aria-label="Open your profile">' + av(u.display_name, 52) +
+      '<b>' + esc(u.display_name) + '</b><span class="muted">@' + esc(u.handle) + "</span></button>" +
+      '<div class="dstats"><span><b>' + c.orbiting + "</b> Orbiting</span><span><b>" + c.orbiters + "</b> Orbiters</span></div>" +
+      '<div class="dsep"></div>' +
+      MENU.map(function (m) { return '<button class="ditem" data-act="drawergo" data-go="' + m[0] + '">' + ic(m[2]) + "<span>" + m[1] + "</span></button>"; }).join("") +
+      '<div class="dsep"></div>' +
+      '<button class="ditem small" data-act="drawergo" data-go="settings">' + ic(I.gear) + "<span>Settings and privacy</span></button>";
+  }
+  async function openDrawer() {
+    renderDrawer(); $("#drawer").hidden = false;
+    var b = $("#drawer-panel .dhead"); if (b) b.focus();
+    var id = S.user.id;
+    var res = await Promise.all([
+      sb.from("orbits").select("follower_id", { count: "exact", head: true }).eq("follower_id", id),
+      sb.from("orbits").select("follower_id", { count: "exact", head: true }).eq("following_id", id)
+    ]);
+    S.counts.orbiting = res[0].count || 0; S.counts.orbiters = res[1].count || 0;
+    if (!$("#drawer").hidden) renderDrawer();
+  }
+  function closeDrawer() { $("#drawer").hidden = true; }
+  function drawerGo(go) {
+    closeDrawer();
+    if (go.indexOf("soon:") === 0) { S.soonTitle = go.slice(5); show("soon"); } else show(go);
+  }
+  function renderSoon() {
+    $("#v-soon").innerHTML = '<div class="empty gx"><b>' + esc(S.soonTitle) + " is coming soon</b>We are still building this. It will show up here when it is ready.</div>";
+  }
+
+  /* ---------- chat ---------- */
+  function msgTime(iso) { return new Date(iso).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }); }
+  async function loadChat(quiet) {
+    var el = $("#chat-list");
+    if (!quiet && !S.chatThreads.length) el.innerHTML = '<div class="loading">Loading…</div>';
+    var r = await sb.from("chat_threads").select("*").order("last_at", { ascending: false }).limit(50);
+    if (r.error) { if (!quiet) el.innerHTML = '<div class="empty gx"><b>Could not load chats</b>' + esc(niceErr(r.error)) + "</div>"; return; }
+    S.chatThreads = r.data || [];
+    if (S.view === "chat") renderChatList();
+  }
+  function renderChatList() {
+    $("#chat-list").innerHTML = S.chatThreads.length ? S.chatThreads.map(function (t) {
+      var n = Number(t.unread_count) || 0;
+      return '<button class="trow gx" data-act="openthread" data-id="' + t.other_id + '">' + av(t.display_name, 46) +
+        '<div class="pi"><div class="ttop"><b>' + esc(t.display_name) + '</b><span class="muted">' + ago(t.last_at) + "</span></div>" +
+        '<span class="tprev' + (n ? " unread" : "") + '">' + (t.last_from_me ? "You: " : "") + esc(t.last_body) + "</span></div>" +
+        (n ? '<span class="dot" aria-label="' + n + ' unread">' + n + "</span>" : "") + "</button>";
+    }).join("") : '<div class="empty gx"><b>No chats yet</b>Tap New message to start a conversation.</div>';
+  }
+  var ncTok = 0, ncTimer;
+  async function loadNewChat() {
+    var tok = ++ncTok, q = $("#newchat-in").value.trim().replace(/^@/, "").replace(/[^\p{L}\p{N} _.-]/gu, "").trim(), body = $("#newchat-body");
+    body.innerHTML = '<div class="loading">Loading…</div>';
+    var qy = sb.from("profiles").select("id,handle,display_name,bio").neq("id", S.user.id).limit(20);
+    if (q) { var like = "%" + q.replace(/%/g, "") + "%"; qy = qy.or("handle.ilike." + like + ",display_name.ilike." + like); }
+    else qy = qy.order("created_at", { ascending: false });
+    var r = await qy;
+    if (tok !== ncTok || S.view !== "newchat") return;
+    S.newPeople = r.data || [];
+    body.innerHTML = S.newPeople.length ? S.newPeople.map(function (p) {
+      return '<button class="trow" data-act="openthread" data-id="' + p.id + '">' + av(p.display_name, 46) +
+        '<div class="pi"><b>' + esc(p.display_name) + '</b><span class="tprev">@' + esc(p.handle) + (p.bio ? " · " + esc(p.bio) : "") + "</span></div></button>";
+    }).join("") : '<p class="muted">' + (q ? 'No one matches "' + esc(q) + '".' : "No one else has joined yet.") + "</p>";
+  }
+  async function openThread(id) {
+    var pr = await sb.from("profiles").select("id,handle,display_name").eq("id", id).maybeSingle();
+    if (pr.error || !pr.data) return toast("Could not open that chat.");
+    S.thread = pr.data; S.threadMsgs = []; S.pendingMsgs = []; S.threadSig = "";
+    $("#thread-in").value = ""; updateSend();
+    show("thread"); renderThread(true);
+    await loadThread(false);
+  }
+  async function loadThread(quiet) {
+    var o = S.thread && S.thread.id, me = S.user.id; if (!o) return;
+    var r = await sb.from("messages").select("id,sender_id,recipient_id,body,created_at,read_at")
+      .or("and(sender_id.eq." + me + ",recipient_id.eq." + o + "),and(sender_id.eq." + o + ",recipient_id.eq." + me + ")")
+      .order("created_at", { ascending: false }).limit(200);
+    if (!S.thread || S.thread.id !== o || S.view !== "thread") return;
+    if (r.error) { if (!quiet) toast(niceErr(r.error)); return; }
+    var rows = (r.data || []).slice().reverse(), sig = rows.length + ":" + (rows.length ? rows[rows.length - 1].id : "");
+    if (sig !== S.threadSig) { S.threadSig = sig; S.threadMsgs = rows; renderThread(false); }
+    if (rows.some(function (m) { return m.sender_id === o && !m.read_at; })) {
+      sb.from("messages").update({ read_at: new Date().toISOString() }).eq("sender_id", o).eq("recipient_id", me).is("read_at", null).then(function () { loadUnread(); });
+    }
+  }
+  function renderThread(bottom) {
+    var box = $("#thread-msgs"), c = $("#content"), me = S.user.id;
+    var near = bottom || (c.scrollHeight - c.scrollTop - c.clientHeight < 140);
+    var rows = S.threadMsgs.concat(S.pendingMsgs);
+    box.innerHTML = rows.length ? rows.map(function (m) {
+      return '<div class="bub ' + (m.sender_id === me ? "me" : "them") + (m.pending ? " pend" : "") + '"><span>' + esc(m.body) + "</span><small>" + msgTime(m.created_at) + "</small></div>";
+    }).join("") : '<div class="empty"><b>Say hello</b>Send the first message to ' + esc(S.thread.display_name) + ".</div>";
+    if (near) c.scrollTop = c.scrollHeight;
+  }
+  function updateSend() { $("#thread-send").disabled = !$("#thread-in").value.trim(); }
+  async function sendMessage() {
+    var inp = $("#thread-in"), body = inp.value.trim(), o = S.thread && S.thread.id;
+    if (!body || body.length > 1000 || !o) return;
+    var tmp = { id: "p" + Date.now(), sender_id: S.user.id, body: body, created_at: new Date().toISOString(), pending: true };
+    S.pendingMsgs.push(tmp); inp.value = ""; updateSend(); renderThread(true);
+    var r = await sb.from("messages").insert({ sender_id: S.user.id, recipient_id: o, body: body });
+    S.pendingMsgs = S.pendingMsgs.filter(function (m) { return m !== tmp; });
+    if (r.error) { renderThread(false); if (!inp.value) { inp.value = body; updateSend(); } return toast(niceErr(r.error)); }
+    S.threadSig = ""; await loadThread(true); renderThread(true);
+  }
+  $("#thread-in").addEventListener("input", updateSend);
+  $("#thread-form").addEventListener("submit", function (e) { e.preventDefault(); sendMessage(); });
+  $("#newchat-in").addEventListener("input", function () { clearTimeout(ncTimer); ncTimer = setTimeout(loadNewChat, 280); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (!$("#compose").hidden) closeCompose(true); else if (!$("#drawer").hidden) closeDrawer();
+  });
+
   /* ---------- settings + security ---------- */
   function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
   function isStandalone() { return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone; }
@@ -575,14 +728,21 @@
     var act = b.dataset.act, art = b.closest(".post"), p = art ? findOrb(art.dataset.id) : null;
     if (act === "theme") { setTheme(effectiveDark() ? "light" : "dark"); renderTop(); if (S.view === "settings") renderSettings(); }
     else if (act === "top") { if (S.view === "home") loadHome(true); $("#content").scrollTop = 0; }
-    else if (act === "back") show(S.view === "security" ? "settings" : "profile");
+    else if (act === "back") show(S.view === "security" ? "settings" : S.view === "thread" || S.view === "newchat" ? "chat" : S.view === "soon" ? "home" : "profile");
+    else if (act === "menu") openDrawer();
+    else if (act === "drawerclose") closeDrawer();
+    else if (act === "drawergo") drawerGo(b.dataset.go);
+    else if (act === "create") { S.replyTo = null; renderReplyChip(); openCompose(); }
+    else if (act === "closecompose") closeCompose(true);
+    else if (act === "newchat") show("newchat");
+    else if (act === "openthread") openThread(b.dataset.id);
     else if (act === "settings") show("settings");
     else if (act === "security") show("security");
     else if (act === "logout") logout();
     else if (act === "like" && p) toggleOrbRel("likes", p, "liked_by_me", "like_count");
     else if (act === "reorb" && p) { toggleOrbRel("reorbs", p, "reorbed_by_me", "reorb_count"); }
     else if (act === "delete" && p) deleteOrb(p);
-    else if (act === "reply" && p) { S.replyTo = { id: p.id, handle: p.handle }; show("home"); renderReplyChip(); var ta = $("#composer-text"); ta.focus(); }
+    else if (act === "reply" && p) { S.replyTo = { id: p.id, handle: p.handle }; renderReplyChip(); openCompose(); }
     else if (act === "cancelreply") { S.replyTo = null; renderReplyChip(); }
     else if (act === "orbit") toggleOrbit(b.dataset.id, b);
     else if (act === "edit") { S.editing = !S.editing; renderProfile(); }
