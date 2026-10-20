@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orbi</title>
+<meta name="description" content="Orbi. Orbit the people you care about and share what is happening.">
+<meta name="theme-color" content="#b9531b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAYFBMVEX//v738u/IppC/dUXTayjQaCbKZye0ZzbFYyW/YSW4XiSzWiKrVyKkUyCZVSmXTh+PSR2FRRx8QRx1PBltPB1lNRZZLxRQKxNIJhI/IhA2Hw8uGw0pGA0mFgwkFQsgEwsDUBI4AAABUklEQVR42nWR23aCMBBFh0ltUEhiIjdtgf//y84lMeiy+wFnzj4BVDidTl//QhJOykfJwHfmWOOx5NAy3x8RBWeiLRyEQA4u50LbvhjlAt0lIzs2WIzSQafoahtobFEK9AxPBm1nAMB0Fo04UeCck0EOd3TpZOoV57ggWDqMvWlMjzRZ1+ccQgg6UY6vg3MkuZAx6LkbPJoaBrgKwRp7SHUTAzHyBz8XcxSCbDLHSAWGXhyaa0E2FRGSQGcajAVs6A4xioEbk5I3PlV0E6UFwZt04zgZX8MbjMTA0M+MEtHjzKCQkwKT+LmjRTvyd0glHmFi+C704sNIlzwRomCeJ8XjMImbBvQ5m+YZlrkyyR2mQzIvsBRkpX9Thydwr9R0qSE8Mvc3Sg4/mccbJYdtXX8rHB3Wdd1gI9b1pVUk6W2DfS+V2tKF832nglaepadkve9/Udg8tAbM6j8AAAAASUVORK5CYII=">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Orbi">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="splash" class="gx" role="img" aria-label="Orbi">
+  <div class="lockup"><span class="ring"></span><span class="word"></span></div>
+  <div id="splash-err" class="errbox" hidden>
+    <p id="splash-err-text"></p>
+    <button class="abtn primary" id="splash-retry" style="width:auto;padding:0 28px">Try again</button>
+  </div>
+</div>
+
+<main id="auth" class="gx" hidden>
+  <div class="auth-inner">
+    <div class="lockup" aria-label="Orbi"><span class="ring"></span><span class="word"></span></div>
+    <div class="auth-head"><h1 id="auth-title"></h1><p id="auth-sub"></p></div>
+    <div class="seg-auth" role="tablist" aria-label="Account">
+      <button id="tab-signup" role="tab" data-mode="signup">Sign up</button>
+      <button id="tab-login" role="tab" data-mode="login">Log in</button>
+    </div>
+    <div id="auth-panel" class="stack"></div>
+    <p class="legal">By continuing you agree to the Orbi terms and privacy policy.</p>
+  </div>
+</main>
+
+<div id="app" hidden>
+  <header class="topbar gx" id="topbar"></header>
+  <div class="content" id="content">
+    <section id="v-home" data-view="home">
+      <div class="tray" id="tray" aria-label="Stories"></div>
+      <div class="tabs2" role="tablist" aria-label="Feed">
+        <button role="tab" data-feed="foryou" id="ft-foryou">For you</button>
+        <button role="tab" data-feed="orbiting" id="ft-orbiting">Orbiting</button>
+      </div>
+      <div id="feed"></div>
+    </section>
+
+    <section id="v-explore" data-view="explore" hidden>
+      <div class="pad gx">
+        <div class="search">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+          <label class="sr" for="search-in">Search Orbi</label>
+          <input id="search-in" class="in" type="search" placeholder="Search orbs and people" autocomplete="off">
+        </div>
+        <div id="explore-body"></div>
+      </div>
+    </section>
+
+    <section id="v-reels" data-view="reels" hidden></section>
+
+    <section id="v-alerts" data-view="alerts" hidden>
+      <div class="pad gx"><h2 class="ttl">Alerts</h2></div>
+      <div id="alerts-list"></div>
+    </section>
+
+    <section id="v-chat" data-view="chat" hidden>
+      <div class="pad gx">
+        <div class="search">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+          <label class="sr" for="chat-q">Search chats</label>
+          <input id="chat-q" class="in" type="search" placeholder="Search" autocomplete="off">
+        </div>
+      </div>
+      <div id="chat-list"></div>
+    </section>
+
+    <section id="v-requests" data-view="requests" hidden></section>
+
+    <section id="v-newchat" data-view="newchat" hidden>
+      <div class="pad gx">
+        <div class="search">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+          <label class="sr" for="newchat-in">Search people</label>
+          <input id="newchat-in" class="in" type="search" placeholder="Search people to message" autocomplete="off">
+        </div>
+        <div id="newchat-body"></div>
+      </div>
+    </section>
+
+    <section id="v-thread" data-view="thread" hidden>
+      <div id="thread-search" class="tsearch gx" hidden>
+        <input id="thread-q" class="in" type="search" placeholder="Search this conversation" aria-label="Search this conversation" autocomplete="off">
+        <button type="button" class="btn sm" data-act="tsearchoff">Done</button>
+      </div>
+      <div id="thread-msgs" class="msgs gx"></div>
+      <div class="threadfoot">
+      <div id="thread-reply" class="replybar gx" hidden></div>
+      <form id="thread-form" class="msgbar gx" autocomplete="off">
+        <button type="button" class="circ" data-act="tplus" aria-label="Add a photo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        <label class="sr" for="thread-in">Message</label>
+        <input id="thread-in" class="in" maxlength="1000" placeholder="Message">
+        <button type="button" class="circ mic" id="thread-mic" data-act="tmic" aria-label="Record a voice message"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        <button type="submit" class="circ send" id="thread-send" aria-label="Send" disabled hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+      </form>
+      <div id="thread-rec" class="msgbar recbar gx" hidden>
+        <button type="button" class="circ" data-act="recx" aria-label="Cancel recording"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+        <span class="recpill"><span class="recdot"></span><b id="rec-t">0:00</b><span class="recnote">Recording…</span></span>
+        <button type="button" class="circ send" data-act="recsend" aria-label="Send voice message"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+      </div>
+      <div id="thread-blocked" class="blockedbar gx" hidden></div>
+      </div>
+    </section>
+
+    <section id="v-chatinfo" data-view="chatinfo" hidden></section>
+    <section id="v-chatmedia" data-view="chatmedia" hidden></section>
+
+    <section id="v-post" data-view="post" hidden></section>
+    <section id="v-user" data-view="user" hidden></section>
+    <section id="v-people" data-view="people" hidden></section>
+    <section id="v-bookmarks" data-view="bookmarks" hidden></section>
+    <section id="v-soon" data-view="soon" hidden></section>
+    <section id="v-profile" data-view="profile" hidden></section>
+    <section id="v-settings" data-view="settings" hidden></section>
+    <section id="v-setpage" data-view="setpage" hidden></section>
+  </div>
+  <nav class="tabbar" id="tabbar" aria-label="Main"></nav>
+  <button class="fab round" id="fab2" data-act="newchat" hidden aria-label="New message"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-6"/><path d="M18.5 3.5a2 2 0 0 1 3 3L12 16l-4 1 1-4z"/></svg></button>
+  <button class="fab" id="fab" data-act="create" hidden aria-label="Create an orb"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Create</button>
+
+  <div id="drawer" class="drawer" hidden>
+    <div class="scrim" data-act="drawerclose"></div>
+    <aside class="panel" role="dialog" aria-modal="true" aria-label="Menu" id="drawer-panel"></aside>
+  </div>
+
+  <div id="compose" class="compose" role="dialog" aria-modal="true" aria-label="Write an orb" hidden>
+    <div class="compose-top gx">
+      <button class="btn" data-act="closecompose">Cancel</button>
+      <button class="btn fill" id="composer-post" disabled>Orb</button>
+    </div>
+    <div id="cmp-ctx" class="gx"></div>
+    <div class="compose-body gx">
+      <div id="composer-av"></div>
+      <div class="cbody">
+        <label class="sr" for="composer-text">Write an orb</label>
+        <textarea id="composer-text" class="in" placeholder="What's happening in your orbit?" rows="3"></textarea>
+        <div id="cmp-media"></div>
+        <div id="cmp-poll"></div>
+        <div id="cmp-quote"></div>
+      </div>
+    </div>
+    <div class="cmp-prog gx" id="cmp-progress" hidden><div class="bar"><i></i></div><span></span></div>
+    <div class="cmp-tools gx" id="cmp-tools"></div>
+  </div>
+
+  <div id="modal" class="modal" hidden></div>
+  <div id="story" class="story" hidden></div>
+  <div id="lightbox" class="lightbox" hidden></div>
+  <div id="sheet" class="sheetwrap" hidden></div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="filepick" hidden tabindex="-1" aria-hidden="true">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
