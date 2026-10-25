@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orbi - a free social app for orbs, reels and stories</title>
+<meta name="description" content="Orbi is a free social app where you share orbs (posts), reels and stories, orbit (follow) people you like, and chat with them.">
+<style>
+:root{--bg:#fff;--fg:#1b1109;--muted:#7b6a5c;--line:#f1e3d6;--accent:#dc4e0b;--soft:#fdf4ec}
+@media(prefers-color-scheme:dark){:root{--bg:#0b0705;--fg:#f8efe6;--muted:#b39c89;--line:#2c1f15;--accent:#ff8a4c;--soft:#1f1610}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:680px;margin:0 auto;padding:22px 18px 56px}
+.brand{font-weight:800;font-size:26px;color:var(--accent);letter-spacing:-.5px}
+h1{font-size:32px;line-height:1.15;margin:26px 0 10px}h2{font-size:19px;margin:30px 0 6px}
+p{margin:0 0 12px}.lead{font-size:18px;color:var(--muted)}
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:13px 22px;border-radius:999px;margin:6px 0 4px}
+ul{padding-left:20px;margin:0 0 12px}li{margin:4px 0}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:12px 0}
+footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:6px 16px}
+a{color:var(--accent)}footer a{color:var(--muted)}
+</style></head><body><main>
+<div class="brand">Orbi</div>
+<h1>A free social app for sharing what moves you.</h1>
+<p class="lead">Orbi lets you share short posts, photos, reels and stories with people anywhere in the world, follow the people you like, and chat with them.</p>
+<a class="btn" href="./">Open Orbi</a>
+
+<h2>What you can do on Orbi</h2>
+<ul>
+<li><b>Orbs:</b> write posts with photos or video, add polls, reply and quote.</li>
+<li><b>Orbit:</b> follow people to fill your Home with their orbs, reels and stories.</li>
+<li><b>Re-orb and like:</b> share what you enjoy and show support.</li>
+<li><b>Reels:</b> watch and post short vertical videos, with music.</li>
+<li><b>Stories:</b> share moments that disappear after a day, or only with Close Friends.</li>
+<li><b>Chat:</b> send private messages to people you connect with.</li>
+</ul>
+
+<h2>Signing in</h2>
+<p>You can create an Orbi account with your email, or with Google. When you choose "Continue with Google", Orbi only receives your name, email address and profile picture from Google, to create your account and show your name on your profile. Orbi does not read your Gmail, contacts, files or any other Google data.</p>
+
+<div class="card"><b>Your data and your safety.</b> Read how we handle your information in the <a href="privacy.html">Privacy Policy</a>, the rules for using Orbi in the <a href="terms.html">Terms of Service</a>, and what is and is not allowed in the <a href="guidelines.html">Community Guidelines</a>.</div>
+
+<h2>Contact</h2>
+<p id="contact">Questions or problems? Email us.</p>
+
+<footer><a href="./">Orbi</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="guidelines.html">Community Guidelines</a></footer>
+</main>
+<script src="config.js"></script>
+<script>var c=(window.ORBI_CONFIG||{}).supportEmail;if(c){var a=document.createElement("a");a.href="mailto:"+c;a.textContent=c;var p=document.getElementById("contact");p.textContent="Questions or problems? Email us at ";p.appendChild(a);p.appendChild(document.createTextNode("."));}</script>
+</body></html>
